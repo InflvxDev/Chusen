@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
+import { FiUsers, FiUploadCloud } from 'react-icons/fi';
 import type { Participant } from './SorteoApp';
 
 interface Props {
@@ -60,7 +61,7 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
         className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest"
         style={{ color: 'var(--brand-mauve)' }}
       >
-        <span>📋</span> Participantes
+        <FiUsers className="inline-block mr-1" /> Participantes
       </h2>
 
       {/* Drop zone */}
@@ -79,7 +80,7 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
         }}
       >
         <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleInput} className="hidden" />
-        <span className="text-3xl">📁</span>
+        <FiUploadCloud className="text-3xl" style={{ color: 'var(--brand-blue)' }} />
         <p className="text-sm font-semibold text-center leading-snug px-4" style={{ color: 'var(--brand-mauve)' }}>
           {participants.length > 0
             ? <><span className="font-black" style={{ color: 'var(--brand-blue)' }}>{participants.length}</span> participantes · <span style={{ color: 'var(--brand-text-muted)' }}>{fileName}</span></>

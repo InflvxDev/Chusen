@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FiLoader, FiShuffle } from 'react-icons/fi';
 import ExcelUploader from './ExcelUploader';
 import PrizeInput from './PrizeInput';
 import WinnerDisplay from './WinnerDisplay';
@@ -9,7 +10,7 @@ export interface Participant {
   numero?: number;
 }
 
-const RAFFLE_DURATION_MS = 5000;
+const RAFFLE_DURATION_MS = 12000;
 
 export default function SorteoApp() {
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -26,7 +27,7 @@ export default function SorteoApp() {
 
     const withNumbers: Participant[] = participants.map(p => ({
       ...p,
-      numero: Math.floor(Math.random() * 9999) + 1,
+      numero: p.id,
     }));
     setParticipants(withNumbers);
 
@@ -108,7 +109,9 @@ export default function SorteoApp() {
                 color: 'var(--brand-mauve)',
               }}
             >
-              {isRaffling ? '⏳ Sorteando…' : '🎲 Sortear'}
+              {isRaffling
+                ? <><FiLoader className="inline-block mr-2 animate-spin" />Sorteando…</>
+                : <><FiShuffle className="inline-block mr-2" />Sortear</>}
             </button>
           </div>
         )}

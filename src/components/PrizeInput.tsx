@@ -1,3 +1,5 @@
+import { FiGift, FiAward } from 'react-icons/fi';
+
 interface Props {
   prize: string;
   onPrizeChange: (value: string) => void;
@@ -13,7 +15,7 @@ export default function PrizeInput({ prize, onPrizeChange }: Props) {
         className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest"
         style={{ color: 'var(--brand-mauve)' }}
       >
-        <span>🎁</span> Premio a Sortear
+        <FiGift className="inline-block mr-1" /> Premio a Sortear
       </h2>
 
       <div className="flex flex-col gap-2">
@@ -57,7 +59,7 @@ export default function PrizeInput({ prize, onPrizeChange }: Props) {
             border: '1px solid rgba(24,108,195,0.35)',
           }}
         >
-          <span className="text-xl">🏆</span>
+          <FiAward className="text-xl" style={{ color: 'var(--brand-blue)' }} />
           <div>
             <p className="font-bold leading-snug" style={{ color: 'var(--brand-text)' }}>{prize}</p>
             <p className="text-xs mt-0.5" style={{ color: 'var(--brand-blue-light)' }}>Premio confirmado</p>

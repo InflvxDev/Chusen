@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { FiAward, FiZap, FiChevronRight, FiRotateCcw } from 'react-icons/fi';
 import type { Participant } from './SorteoApp';
 
 interface Props {
@@ -41,10 +42,11 @@ export default function WinnerDisplay({
       setAnimKey(k => k + 1);
 
       let delay = 60;
-      if      (elapsed > 4000) delay = 600;
-      else if (elapsed > 3000) delay = 350;
-      else if (elapsed > 2000) delay = 160;
-      else if (elapsed > 1000) delay = 90;
+      if      (elapsed > 10000) delay = 800;
+      else if (elapsed > 8500)  delay = 500;
+      else if (elapsed > 7000)  delay = 260;
+      else if (elapsed > 5000)  delay = 130;
+      else if (elapsed > 2500)  delay = 80;
 
       timeoutId = setTimeout(cycle, delay);
     };
@@ -107,7 +109,10 @@ export default function WinnerDisplay({
 
         {/* Content */}
         <div className="relative z-10 px-8 py-12" style={{ color: 'var(--brand-white)' }}>
-          <div className="text-7xl mb-3">🏆</div>
+          <FiAward
+            className="mx-auto mb-3"
+            style={{ fontSize: '5rem', color: 'var(--brand-white)' }}
+          />
           <h2
             className="text-xl font-black uppercase tracking-widest mb-6"
             style={{ color: 'var(--brand-mauve)' }}
@@ -160,6 +165,7 @@ export default function WinnerDisplay({
               border: '1px solid rgba(255,254,254,0.20)',
             }}
           >
+            <FiRotateCcw className="inline-block mr-2" />
             Nuevo Sorteo
           </button>
         </div>
@@ -187,10 +193,10 @@ export default function WinnerDisplay({
           style={{ color: isRaffling ? 'var(--brand-blue-light)' : 'var(--brand-mauve)' }}
         >
           {isRaffling
-            ? '⚡ sorteando participante…'
+            ? <><FiZap className="inline-block mr-1" />sorteando participante…</>
             : participants.length > 0
-              ? '▸ listo para sortear'
-              : '▸ en espera'}
+              ? <><FiChevronRight className="inline-block mr-1" />listo para sortear</>
+              : <><FiChevronRight className="inline-block mr-1" />en espera</>}
         </span>
       </div>
 
