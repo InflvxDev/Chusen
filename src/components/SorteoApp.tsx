@@ -70,7 +70,7 @@ export default function SorteoApp() {
             CHUSEN
           </h1>
           <p className="mt-2 text-xs font-medium tracking-widest uppercase" style={{ color: 'var(--brand-mauve)' }}>
-            Sistema de sorteos en vivo
+            La suerte decide, nosotros la mostramos.
           </p>
         </header>
 
