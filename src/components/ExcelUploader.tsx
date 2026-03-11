@@ -1,7 +1,9 @@
 import { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { FiUsers, FiUploadCloud } from 'react-icons/fi';
+import { FiUsers, FiUploadCloud, FiList } from 'react-icons/fi';
 import type { Participant } from './SorteoApp';
+
+type InputMode = 'excel' | 'manual';
 
 interface Props {
   onParticipantsLoaded: (participants: Participant[], headers: string[]) => void;
@@ -13,6 +15,24 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [fileName, setFileName] = useState('');
+  const [inputMode, setInputMode] = useState<InputMode>('excel');
+  const [manualText, setManualText] = useState('');
+
+  const switchMode = (mode: InputMode) => {
+    if (mode === inputMode) return;
+    setInputMode(mode);
+    onParticipantsLoaded([], []);
+    setManualText('');
+    setFileName('');
+  };
+
+  const handleManualChange = (text: string) => {
+    setManualText(text);
+    const lines = text.split('\n').filter(l => l.trim() !== '');
+    if (lines.length === 0) { onParticipantsLoaded([], []); return; }
+    const data: Participant[] = lines.map((line, i) => ({ id: i + 1, data: [line.trim()] }));
+    onParticipantsLoaded(data, ['Nombre']);
+  };
 
   const parseFile = (file: File) => {
     setFileName(file.name);
@@ -53,56 +73,74 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
   };
 
   return (
-    <div
-      className="flex flex-col gap-5 rounded-2xl p-5 h-full"
-      style={{ background: 'var(--brand-surface)', border: '1px solid var(--brand-border)' }}
-    >
-      <h2
-        className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest"
-        style={{ color: 'var(--brand-mauve)' }}
-      >
-        <FiUsers className="inline-block mr-1" /> Participantes
-      </h2>
-
-      {/* Drop zone */}
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={() => fileInputRef.current?.click()}
-        onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
-        onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={handleDrop}
-        className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-7 cursor-pointer transition-all duration-200 select-none"
-        style={{
-          borderColor: isDragging ? 'var(--brand-blue)' : 'rgba(178,152,155,0.30)',
-          background: isDragging ? 'rgba(24,108,195,0.08)' : 'transparent',
-        }}
-      >
-        <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleInput} className="hidden" />
-        <FiUploadCloud className="text-3xl" style={{ color: 'var(--brand-blue)' }} />
-        <p className="text-sm font-semibold text-center leading-snug px-4" style={{ color: 'var(--brand-mauve)' }}>
-          {participants.length > 0
-            ? <><span className="font-black" style={{ color: 'var(--brand-blue)' }}>{participants.length}</span> participantes · <span style={{ color: 'var(--brand-text-muted)' }}>{fileName}</span></>
-            : 'Clic o arrastra tu Excel aquí'}
-        </p>
-        <p className="text-xs" style={{ color: 'var(--brand-text-muted)' }}>.xlsx · .xls</p>
+    <div className="flex flex-col gap-5 rounded-2xl p-5 h-full bg-brand-surface border border-brand-border">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-brand-mauve">
+          <FiUsers className="inline-block mr-1" /> Participantes
+        </h2>
+        <div className="flex rounded-lg overflow-hidden border border-brand-border">
+          <button
+            title="Subir Excel"
+            onClick={() => switchMode('excel')}
+            className={`px-2.5 py-1.5 transition-colors duration-200 ${inputMode === 'excel' ? 'bg-brand-blue text-white' : 'bg-transparent text-brand-mauve'}`}
+          >
+            <FiUploadCloud />
+          </button>
+          <button
+            title="Escribir lista"
+            onClick={() => switchMode('manual')}
+            className={`px-2.5 py-1.5 transition-colors duration-200 ${inputMode === 'manual' ? 'bg-brand-blue text-white' : 'bg-transparent text-brand-mauve'}`}
+          >
+            <FiList />
+          </button>
+        </div>
       </div>
+
+      {/* Drop zone / Manual input */}
+      {inputMode === 'excel' ? (
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={() => fileInputRef.current?.click()}
+          onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}
+          onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+          className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-7 cursor-pointer transition-all duration-200 select-none ${isDragging ? 'border-brand-blue bg-brand-blue/8' : 'border-brand-mauve/30 bg-transparent'}`}
+        >
+          <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleInput} className="hidden" />
+          <FiUploadCloud className="text-3xl text-brand-blue" />
+          <p className="text-sm font-semibold text-center leading-snug px-4 text-brand-mauve">
+            {participants.length > 0
+              ? <><span className="font-black text-brand-blue">{participants.length}</span> participantes · <span className="text-brand-text-muted">{fileName}</span></>
+              : 'Clic o arrastra tu Excel aquí'}
+          </p>
+          <p className="text-xs text-brand-text-muted">.xlsx · .xls</p>
+        </div>
+      ) : (
+        <textarea
+          placeholder={`Un participante por línea\nEj:\nJuan Pérez\nMaría García`}
+          value={manualText}
+          onChange={e => handleManualChange(e.target.value)}
+          rows={8}
+          className="w-full rounded-xl border-2 border-brand-mauve/30 px-4 py-3 resize-none text-sm transition-all duration-200 focus:outline-none focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/15 bg-brand-bg text-brand-text"
+        />
+      )}
 
       {/* Participants table */}
       {participants.length > 0 && (
-        <div className="overflow-auto rounded-xl max-h-72" style={{ border: '1px solid var(--brand-border)' }}>
+        <div className="overflow-auto rounded-xl max-h-72 border border-brand-border">
           <table className="w-full text-sm min-w-max">
-            <thead className="sticky top-0" style={{ background: 'var(--brand-surface2)' }}>
+            <thead className="sticky top-0 bg-brand-surface2">
               <tr>
-                <th className="px-3 py-2 text-left font-semibold whitespace-nowrap" style={{ color: 'var(--brand-mauve)' }}>#</th>
+                <th className="px-3 py-2 text-left font-semibold whitespace-nowrap text-brand-mauve">#</th>
                 {headers.map((h, i) => (
-                  <th key={i} className="px-3 py-2 text-left font-semibold whitespace-nowrap" style={{ color: 'var(--brand-mauve)' }}>
+                  <th key={i} className="px-3 py-2 text-left font-semibold whitespace-nowrap text-brand-mauve">
                     {h || `Columna ${i + 1}`}
                   </th>
                 ))}
                 {participants[0]?.numero !== undefined && (
-                  <th className="px-3 py-2 text-left font-semibold whitespace-nowrap" style={{ color: 'var(--brand-blue-light)' }}>Número</th>
+                  <th className="px-3 py-2 text-left font-semibold whitespace-nowrap text-brand-blue-light">Número</th>
                 )}
               </tr>
             </thead>
@@ -110,20 +148,14 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
               {participants.map((p, rowIdx) => (
                 <tr
                   key={p.id}
-                  className="transition-colors"
-                  style={{
-                    borderTop: '1px solid var(--brand-border)',
-                    background: rowIdx % 2 !== 0 ? 'rgba(24,108,195,0.04)' : 'transparent',
-                  }}
-                  onMouseEnter={e => (e.currentTarget.style.background = 'rgba(24,108,195,0.10)')}
-                  onMouseLeave={e => (e.currentTarget.style.background = rowIdx % 2 !== 0 ? 'rgba(24,108,195,0.04)' : 'transparent')}
+                  className={`border-t border-brand-border transition-colors hover:bg-brand-blue/10 ${rowIdx % 2 !== 0 ? 'bg-brand-blue/4' : ''}`}
                 >
-                  <td className="px-3 py-2 tabular-nums" style={{ color: 'var(--brand-text-muted)' }}>{p.id}</td>
+                  <td className="px-3 py-2 tabular-nums text-brand-text-muted">{p.id}</td>
                   {p.data.map((val, i) => (
-                    <td key={i} className="px-3 py-2 whitespace-nowrap" style={{ color: 'var(--brand-text)' }}>{val}</td>
+                    <td key={i} className="px-3 py-2 whitespace-nowrap text-brand-text">{val}</td>
                   ))}
                   {p.numero !== undefined && (
-                    <td className="px-3 py-2 font-bold tabular-nums" style={{ color: 'var(--brand-blue-light)' }}>
+                    <td className="px-3 py-2 font-bold tabular-nums text-brand-blue-light">
                       #{String(p.numero).padStart(4, '0')}
                     </td>
                   )}

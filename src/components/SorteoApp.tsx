@@ -51,25 +51,22 @@ export default function SorteoApp() {
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--brand-bg)' }}>
+    <div className="min-h-screen bg-brand-bg">
       <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
 
         {/* ── Header ── */}
         <header className="text-center pt-4 pb-2">
           <h1
-            className="font-black text-7xl select-none"
+            className="font-black text-7xl select-none animate-logo-reveal tracking-[0.15em] bg-clip-text text-transparent"
             style={{
-              animation: 'logo-reveal 0.8s ease-out both',
-              letterSpacing: '0.15em',
-              background: 'linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-light) 60%, var(--brand-blue) 100%)',
+              background: 'linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-blue-light) 60%, var(--color-brand-blue) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
             }}
           >
             CHUSEN
           </h1>
-          <p className="mt-2 text-xs font-medium tracking-widest uppercase" style={{ color: 'var(--brand-mauve)' }}>
+          <p className="mt-2 text-xs font-medium tracking-widest uppercase text-brand-mauve">
             La suerte decide, nosotros la mostramos.
           </p>
         </header>
@@ -97,17 +94,13 @@ export default function SorteoApp() {
                 'px-16 py-4 text-lg font-black rounded-2xl uppercase tracking-widest',
                 'transition-all duration-300 select-none',
                 canRaffle
-                  ? 'cursor-pointer hover:scale-105 active:scale-95'
-                  : 'cursor-not-allowed opacity-40',
+                  ? 'cursor-pointer hover:scale-105 active:scale-95 text-brand-white'
+                  : 'cursor-not-allowed opacity-40 bg-brand-surface2 text-brand-mauve',
               ].join(' ')}
               style={canRaffle ? {
-                background: 'linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-blue-light) 100%)',
-                color: 'var(--brand-white)',
+                background: 'linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-blue-light) 100%)',
                 boxShadow: '0 4px 28px rgba(24,108,195,0.50)',
-              } : {
-                background: 'var(--brand-surface2)',
-                color: 'var(--brand-mauve)',
-              }}
+              } : undefined}
             >
               {isRaffling
                 ? <><FiLoader className="inline-block mr-2 animate-spin" />Sorteando…</>

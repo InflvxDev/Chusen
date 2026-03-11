@@ -83,11 +83,8 @@ export default function WinnerDisplay({
   if (winnerRevealed && winner) {
     return (
       <div
-        className="relative overflow-hidden rounded-3xl text-center"
-        style={{
-          background: 'linear-gradient(150deg, #0d3d7a 0%, var(--brand-blue) 50%, #0d3d7a 100%)',
-          animation: 'winner-pop 0.65s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-        }}
+        className="relative overflow-hidden rounded-3xl text-center animate-winner-pop"
+        style={{ background: 'linear-gradient(150deg, #0d3d7a 0%, var(--color-brand-blue) 50%, #0d3d7a 100%)' }}
       >
         {/* Confetti */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
@@ -108,62 +105,51 @@ export default function WinnerDisplay({
         </div>
 
         {/* Content */}
-        <div className="relative z-10 px-8 py-12" style={{ color: 'var(--brand-white)' }}>
-          <FiAward
-            className="mx-auto mb-3"
-            style={{ fontSize: '5rem', color: 'var(--brand-white)' }}
-          />
-          <h2
-            className="text-xl font-black uppercase tracking-widest mb-6"
-            style={{ color: 'var(--brand-mauve)' }}
-          >
+        <div className="relative z-10 px-8 py-12 text-brand-white">
+          <FiAward className="mx-auto mb-3 text-brand-white" style={{ fontSize: '5rem' }} />
+          <h2 className="text-xl font-black uppercase tracking-widest mb-6 text-white/85">
             ¡Ganador!
           </h2>
 
           {headers[0] && (
-            <p className="text-xs font-bold uppercase tracking-widest mb-0.5" style={{ color: 'var(--brand-mauve)' }}>
+            <p className="text-xs font-bold uppercase tracking-widest mb-0.5 text-white/75">
               {headers[0]}
             </p>
           )}
-          <p className="text-4xl font-black mb-1" style={{ color: 'var(--brand-white)' }}>
+          <p className="text-4xl font-black mb-1 text-brand-white">
             {winner.data[0]}
           </p>
           {winner.data[1]?.trim() && (
-            <p className="text-2xl font-bold mb-4" style={{ color: 'rgba(255,254,254,0.80)' }}>
+            <p className="text-2xl font-bold mb-4 text-white/80">
               {winner.data[1]}
             </p>
           )}
           {winner.data[2]?.trim() && (
-            <p className="text-base italic mb-4" style={{ color: 'rgba(255,254,254,0.65)' }}>
+            <p className="text-base italic mb-4 text-white/65">
               "{winner.data[2]}"
             </p>
           )}
           {winner.numero !== undefined && (
-            <p className="text-sm font-semibold mb-4" style={{ color: 'var(--brand-mauve)' }}>
+            <p className="text-sm font-semibold mb-4 text-white/75">
               Número asignado:{' '}
-              <span className="font-black" style={{ color: 'var(--brand-white)' }}>
+              <span className="font-black text-brand-white">
                 #{String(winner.numero).padStart(4, '0')}
               </span>
             </p>
           )}
 
-          <div className="mt-6 pt-6 border-t" style={{ borderColor: 'rgba(255,254,254,0.15)' }}>
-            <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: 'var(--brand-mauve)' }}>
+          <div className="mt-6 pt-6 border-t border-white/15">
+            <p className="text-xs font-bold uppercase tracking-widest mb-1 text-white/75">
               Premio
             </p>
-            <p className="text-3xl font-black" style={{ color: 'var(--brand-white)' }}>
+            <p className="text-3xl font-black text-brand-white">
               {prize}
             </p>
           </div>
 
           <button
             onClick={onReset}
-            className="mt-8 rounded-xl px-8 py-3 font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer"
-            style={{
-              background: 'rgba(255,254,254,0.12)',
-              color: 'var(--brand-white)',
-              border: '1px solid rgba(255,254,254,0.20)',
-            }}
+            className="mt-8 rounded-xl px-8 py-3 font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer bg-white/12 text-brand-white border border-white/20"
           >
             <FiRotateCcw className="inline-block mr-2" />
             Nuevo Sorteo
@@ -176,21 +162,12 @@ export default function WinnerDisplay({
   // ── Slot machine / idle display ──────────────────────────────────────────
   return (
     <div
-      className="relative w-full rounded-3xl overflow-hidden transition-all duration-500"
-      style={{
-        background: 'var(--brand-surface)',
-        border: `2px solid ${isRaffling ? 'var(--brand-blue)' : 'var(--brand-border)'}`,
-        ...(isRaffling ? { animation: 'glow-border 1s ease-in-out infinite' } : {}),
-      }}
+      className={`relative w-full rounded-3xl overflow-hidden transition-all duration-500 bg-brand-surface border-2 ${isRaffling ? 'border-brand-blue animate-glow-border' : 'border-brand-border'}`}
     >
       {/* Top label */}
-      <div
-        className="flex justify-center py-3 border-b"
-        style={{ background: 'var(--brand-surface2)', borderColor: 'var(--brand-border)' }}
-      >
+      <div className="flex justify-center py-3 border-b border-brand-border bg-brand-surface2">
         <span
-          className={['text-xs font-black uppercase tracking-widest', isRaffling ? 'animate-pulse' : ''].join(' ')}
-          style={{ color: isRaffling ? 'var(--brand-blue-light)' : 'var(--brand-mauve)' }}
+          className={`text-xs font-black uppercase tracking-widest ${isRaffling ? 'animate-pulse text-brand-blue-light' : 'text-brand-mauve'}`}
         >
           {isRaffling
             ? <><FiZap className="inline-block mr-1" />sorteando participante…</>
@@ -204,8 +181,7 @@ export default function WinnerDisplay({
         {current?.numero !== undefined && (
           <span
             key={`num-${animKey}`}
-            className="text-sm font-bold tracking-widest tabular-nums"
-            style={{ animation: 'slot-in 0.14s ease-out', color: 'var(--brand-blue)' }}
+            className="text-sm font-bold tracking-widest tabular-nums animate-slot-in text-brand-blue"
           >
             N.° {String(current.numero).padStart(4, '0')}
           </span>
@@ -213,8 +189,7 @@ export default function WinnerDisplay({
 
         <div
           key={`name-${animKey}`}
-          className="text-4xl font-black text-center leading-tight"
-          style={{ animation: 'slot-in 0.14s ease-out', color: 'var(--brand-text)' }}
+          className="text-4xl font-black text-center leading-tight animate-slot-in text-brand-text"
         >
           {displayName}
         </div>
@@ -222,8 +197,7 @@ export default function WinnerDisplay({
         {displayDesc && (
           <div
             key={`desc-${animKey}`}
-            className="text-lg text-center"
-            style={{ animation: 'slot-in 0.14s ease-out', color: 'var(--brand-mauve)' }}
+            className="text-lg text-center animate-slot-in text-brand-mauve"
           >
             {displayDesc}
           </div>
