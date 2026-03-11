@@ -7,7 +7,7 @@ interface Props {
   isRaffling: boolean;
 }
 
-const WHEEL_COLORS = ['#186cc3', '#0d3d7a'];
+const WHEEL_COLORS = ['#186cc3', '#0d3d7a', '#3b88d8'];
 const MAX_SEGMENTS = 36;
 
 function buildSegPath(i: number, n: number, R: number, cx: number, cy: number): string {
@@ -148,7 +148,7 @@ export default function RouletteWheel({ participants, winner, isRaffling }: Prop
               <g key={p.id}>
                 <path
                   d={buildSegPath(i, N, R, CX, CY)}
-                  fill={WHEEL_COLORS[i % WHEEL_COLORS.length]}
+                  fill={WHEEL_COLORS[N % 2 === 1 && i === N - 1 ? 2 : i % 2]}
                   stroke="rgba(255,255,255,0.12)"
                   strokeWidth="0.5"
                 />
