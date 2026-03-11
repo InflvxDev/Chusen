@@ -51,67 +51,34 @@ export default function SorteoApp() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg">
-      <div className="max-w-6xl mx-auto px-6 py-10 space-y-8">
-
+    <div className="min-h-screen bg-brand-bg relative overflow-hidden flex flex-col font-sans text-brand-text">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 flex flex-col">
+        
         {/* ── Header ── */}
-        <header className="text-center pt-4 pb-2">
-          <h1
-            className="font-black text-7xl select-none animate-logo-reveal tracking-[0.15em] bg-clip-text text-transparent"
-            style={{
-              background: 'linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-blue-light) 60%, var(--color-brand-blue) 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-            }}
-          >
-            CHUSEN
-          </h1>
-          <p className="mt-2 text-xs font-medium tracking-widest uppercase text-brand-mauve">
-            La suerte decide, nosotros la mostramos.
-          </p>
+        <header className="w-full flex justify-center items-center mb-8 lg:mb-12">
+          <div className="text-center">
+            <h1
+              className="font-black text-5xl md:text-6xl select-none animate-logo-reveal tracking-[0.2em] bg-clip-text text-transparent"
+              style={{
+                background: 'linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-blue-light) 60%, var(--color-brand-blue) 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              CHUSEN
+            </h1>
+            <p className="mt-3 text-xs md:text-sm font-semibold tracking-[0.3em] uppercase text-brand-mauve opacity-80">
+              La suerte decide, nosotros la mostramos
+            </p>
+          </div>
         </header>
 
-        {/* ── Slot machine / Winner zone — only while raffling or winner exists ── */}
-        {(isRaffling || winner) && (
-          <WinnerDisplay
-            participants={participants}
-            winner={winner}
-            winnerRevealed={winnerRevealed}
-            isRaffling={isRaffling}
-            prize={prize}
-            headers={headers}
-            onReset={handleReset}
-          />
-        )}
-
-        {/* ── Sortear button — hidden once winner is revealed ── */}
-        {!winnerRevealed && (
-          <div className="flex justify-center">
-            <button
-              onClick={handleRaffle}
-              disabled={!canRaffle}
-              className={[
-                'px-16 py-4 text-lg font-black rounded-2xl uppercase tracking-widest',
-                'transition-all duration-300 select-none',
-                canRaffle
-                  ? 'cursor-pointer hover:scale-105 active:scale-95 text-brand-white'
-                  : 'cursor-not-allowed opacity-40 bg-brand-surface2 text-brand-mauve',
-              ].join(' ')}
-              style={canRaffle ? {
-                background: 'linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-blue-light) 100%)',
-                boxShadow: '0 4px 28px rgba(24,108,195,0.50)',
-              } : undefined}
-            >
-              {isRaffling
-                ? <><FiLoader className="inline-block mr-2 animate-spin" />Sorteando…</>
-                : <><FiShuffle className="inline-block mr-2" />Sortear</>}
-            </button>
-          </div>
-        )}
-
-        {/* ── Inputs: Excel uploader + Prize ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-          <div className="lg:col-span-2">
+        {/* ── Main content grid ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 flex-1 items-stretch">
+          
+          {/* ── Left Column: Config (Inputs) ── */}
+          <div className={`lg:col-span-5 flex flex-col gap-6 transition-all duration-500 ease-in-out ${isRaffling || winnerRevealed ? 'opacity-40 grayscale-[0.5] pointer-events-none' : 'opacity-100'}`}>
+            <PrizeInput prize={prize} onPrizeChange={setPrize} />
             <ExcelUploader
               onParticipantsLoaded={(data: Participant[], hdrs: string[]) => {
                 setParticipants(data);
@@ -123,11 +90,61 @@ export default function SorteoApp() {
               headers={headers}
             />
           </div>
-          <div className="lg:col-span-1">
-            <PrizeInput prize={prize} onPrizeChange={setPrize} />
-          </div>
-        </div>
 
+          {/* ── Right Column: Display Stage & Actions ── */}
+          <div className="lg:col-span-7 flex flex-col h-full relative">
+            
+            {/* Decorative background element */}
+            <div className="absolute top-0 right-0 -m-20 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 -m-20 w-64 h-64 bg-brand-mauve/5 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="flex-1 flex flex-col justify-center relative z-10 w-full min-h-[500px]">
+              <WinnerDisplay
+                participants={participants}
+                winner={winner}
+                winnerRevealed={winnerRevealed}
+                isRaffling={isRaffling}
+                prize={prize}
+                headers={headers}
+                onReset={handleReset}
+              />
+            </div>
+
+            {/* ── Sortear button ── */}
+            {!winnerRevealed && (
+              <div className="mt-8 flex justify-center relative z-10">
+                <button
+                  onClick={handleRaffle}
+                  disabled={!canRaffle}
+                  className={`
+                    group relative flex items-center justify-center gap-3 px-12 py-5 text-lg font-black rounded-full uppercase tracking-widest
+                    transition-all duration-300 select-none overflow-hidden
+                    ${canRaffle 
+                      ? 'cursor-pointer hover:-translate-y-1 hover:shadow-xl active:translate-y-0 text-brand-white' 
+                      : 'cursor-not-allowed opacity-50 bg-brand-surface border-2 border-brand-border text-brand-mauve'}
+                  `}
+                  style={canRaffle ? {
+                    background: 'linear-gradient(135deg, var(--color-brand-blue) 0%, var(--color-brand-blue-light) 100%)',
+                    boxShadow: '0 8px 32px rgba(24,108,195,0.3)',
+                  } : undefined}
+                >
+                  {isRaffling ? (
+                    <><FiLoader className="text-2xl animate-spin" /> <span className="relative z-10">Sorteando...</span></>
+                  ) : (
+                    <>
+                      <FiShuffle className="text-2xl transition-transform group-hover:rotate-180 duration-500" />
+                      <span className="relative z-10">Iniciar Sorteo</span>
+                    </>
+                  )}
+                  {canRaffle && (
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-in-out"></div>
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+          
+        </div>
       </div>
     </div>
   );

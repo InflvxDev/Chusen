@@ -1,4 +1,4 @@
-import { FiGift, FiAward } from 'react-icons/fi';
+import { FiGift, FiAward, FiCheckCircle } from 'react-icons/fi';
 
 interface Props {
   prize: string;
@@ -7,41 +7,33 @@ interface Props {
 
 export default function PrizeInput({ prize, onPrizeChange }: Props) {
   return (
-    <div className="flex flex-col gap-5 rounded-2xl p-5 bg-brand-surface border border-brand-border">
-      <h2 className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-brand-mauve">
-        <FiGift className="inline-block mr-1" /> Premio a Sortear
-      </h2>
+    <div className="flex flex-col gap-4 rounded-3xl p-6 lg:p-8 bg-brand-bg border border-brand-border/40 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="flex items-center gap-3 mb-2">
+        <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue">
+          <FiGift className="text-xl" />
+        </div>
+        <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-brand-mauve">
+          Premio a Sortear
+        </h2>
+      </div>
 
-      <div className="flex flex-col gap-2">
-        <label
-          htmlFor="prize-input"
-          className="text-xs font-medium uppercase tracking-widest text-brand-mauve"
-        >
-          ¿Qué se va a sortear?
-        </label>
+      <div className="relative group flex flex-col gap-2">
         <input
           id="prize-input"
           type="text"
           value={prize}
           onChange={e => onPrizeChange(e.target.value)}
-          placeholder="Ej: Televisor 55'', Viaje…"
+          placeholder="Ej: Viaje a la playa, Consola..."
           maxLength={120}
-          className="w-full rounded-xl px-4 py-3 transition-all focus:outline-none bg-brand-surface2 border border-brand-border text-brand-text focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/20"
+          className="w-full bg-brand-surface/50 border-b-2 border-brand-border/50 px-4 py-4 text-brand-text placeholder-brand-text-muted/60 focus:outline-none focus:border-brand-blue focus:bg-brand-surface transition-all duration-300 text-lg font-medium rounded-t-xl"
         />
+        {prize.trim() && (
+           <FiCheckCircle className="absolute right-4 top-1/2 -translate-y-1/2 mt-1 text-brand-blue animate-fade-in-up" />
+        )}
       </div>
 
-      {prize.trim() && (
-        <div className="flex items-center gap-3 rounded-xl px-4 py-3 animate-fade-in-up bg-brand-blue/12 border border-brand-blue/35">
-          <FiAward className="text-xl text-brand-blue" />
-          <div>
-            <p className="font-bold leading-snug text-brand-text">{prize}</p>
-            <p className="text-xs mt-0.5 text-brand-blue-light">Premio confirmado</p>
-          </div>
-        </div>
-      )}
-
-      <p className="text-xs mt-auto text-brand-text-muted">
-        Ingresa el nombre del premio antes de iniciar el sorteo.
+      <p className="text-xs font-medium text-brand-text-muted/80 ml-1">
+        Define el premio antes de comenzar.
       </p>
     </div>
   );

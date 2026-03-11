@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { FiAward, FiZap, FiChevronRight, FiRotateCcw } from 'react-icons/fi';
+import { FiAward, FiZap, FiChevronRight, FiRotateCcw, FiStar, FiGift, FiUsers, FiCheckCircle } from 'react-icons/fi';
 import type { Participant } from './SorteoApp';
 
 interface Props {
@@ -83,11 +83,11 @@ export default function WinnerDisplay({
   if (winnerRevealed && winner) {
     return (
       <div
-        className="relative overflow-hidden rounded-3xl text-center animate-winner-pop"
+        className="relative w-full h-full min-h-125 flex flex-col items-center justify-center overflow-hidden rounded-3xl text-center animate-winner-pop shadow-2xl"
         style={{ background: 'linear-gradient(150deg, #0d3d7a 0%, var(--color-brand-blue) 50%, #0d3d7a 100%)' }}
       >
         {/* Confetti */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0" aria-hidden>
           {confetti.map(p => (
             <div
               key={p.id}
@@ -105,54 +105,56 @@ export default function WinnerDisplay({
         </div>
 
         {/* Content */}
-        <div className="relative z-10 px-8 py-12 text-brand-white">
-          <FiAward className="mx-auto mb-3 text-brand-white" style={{ fontSize: '5rem' }} />
-          <h2 className="text-xl font-black uppercase tracking-widest mb-6 text-white/85">
-            ¡Ganador!
+        <div className="relative z-10 px-6 sm:px-8 py-10 w-full max-w-lg mx-auto flex flex-col items-center">
+          
+          <div className="w-20 h-20 bg-brand-blue/20 rounded-full flex items-center justify-center mb-6 text-brand-surface border border-brand-blue/30 shadow-[0_0_30px_rgba(59,136,216,0.3)]">
+            <FiAward className="text-4xl" />
+          </div>
+
+          <h2 className="text-sm font-black uppercase tracking-[0.4em] mb-8 text-brand-surface">
+            Tenemos un ganador
           </h2>
 
-          {headers[0] && (
-            <p className="text-xs font-bold uppercase tracking-widest mb-0.5 text-white/75">
-              {headers[0]}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 sm:p-8 w-full shadow-xl relative">
+            {headers[0] && (
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-2 text-white/80">
+                {headers[0]}
+              </p>
+            )}
+            <p className="text-4xl md:text-5xl font-black mb-2 text-brand-white tracking-tight">
+              {winner.data[0]}
             </p>
-          )}
-          <p className="text-4xl font-black mb-1 text-brand-white">
-            {winner.data[0]}
-          </p>
-          {winner.data[1]?.trim() && (
-            <p className="text-2xl font-bold mb-4 text-white/80">
-              {winner.data[1]}
-            </p>
-          )}
-          {winner.data[2]?.trim() && (
-            <p className="text-base italic mb-4 text-white/65">
-              "{winner.data[2]}"
-            </p>
-          )}
-          {winner.numero !== undefined && (
-            <p className="text-sm font-semibold mb-4 text-white/75">
-              Número asignado:{' '}
-              <span className="font-black text-brand-white">
+            {winner.data[1]?.trim() && (
+              <p className="text-xl font-medium mb-3 text-white/80">
+                {winner.data[1]}
+              </p>
+            )}
+            {winner.data[2]?.trim() && (
+              <p className="text-sm italic mb-4 text-white/80">
+                "{winner.data[2]}"
+              </p>
+            )}
+            
+            <div className="mt-8 flex items-center justify-center gap-2 border-t border-white/10 pt-6">
+              <FiGift className="text-brand-surface" />
+              <p className="text-lg font-bold text-brand-white">
+                {prize}
+              </p>
+            </div>
+            
+            {winner.numero !== undefined && (
+              <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-brand-blue/20 text-brand-surface text-[10px] sm:text-xs font-black tracking-widest px-3 py-1 rounded-full border border-brand-blue/30">
                 #{String(winner.numero).padStart(4, '0')}
-              </span>
-            </p>
-          )}
-
-          <div className="mt-6 pt-6 border-t border-white/15">
-            <p className="text-xs font-bold uppercase tracking-widest mb-1 text-white/75">
-              Premio
-            </p>
-            <p className="text-3xl font-black text-brand-white">
-              {prize}
-            </p>
+              </div>
+            )}
           </div>
 
           <button
             onClick={onReset}
-            className="mt-8 rounded-xl px-8 py-3 font-bold transition-all hover:scale-105 active:scale-95 cursor-pointer bg-white/12 text-brand-white border border-white/20"
+            className="mt-10 rounded-full px-8 py-4 text-sm font-bold uppercase tracking-widest transition-all hover:-translate-y-1 hover:bg-white/15 active:translate-y-0 cursor-pointer bg-white/10 text-brand-white border border-white/20 flex items-center gap-3"
           >
-            <FiRotateCcw className="inline-block mr-2" />
-            Nuevo Sorteo
+            <FiRotateCcw className="text-lg" />
+            <span className="mt-0.5">Nuevo Sorteo</span>
           </button>
         </div>
       </div>
@@ -162,46 +164,115 @@ export default function WinnerDisplay({
   // ── Slot machine / idle display ──────────────────────────────────────────
   return (
     <div
-      className={`relative w-full rounded-3xl overflow-hidden transition-all duration-500 bg-brand-surface border-2 ${isRaffling ? 'border-brand-blue animate-glow-border' : 'border-brand-border'}`}
+      className={`relative w-full h-full min-h-100 flex flex-col items-center justify-center rounded-3xl overflow-hidden transition-all duration-700
+      ${isRaffling ? 'bg-brand-surface border-2 border-brand-blue shadow-[0_0_40px_rgba(24,108,195,0.2)] scale-[1.02]' : 'bg-brand-bg border border-brand-border/40 shadow-sm'}
+      `}
     >
-      {/* Top label */}
-      <div className="flex justify-center py-3 border-b border-brand-border bg-brand-surface2">
-        <span
-          className={`text-xs font-black uppercase tracking-widest ${isRaffling ? 'animate-pulse text-brand-blue-light' : 'text-brand-mauve'}`}
-        >
-          {isRaffling
-            ? <><FiZap className="inline-block mr-1" />sorteando participante…</>
-            : participants.length > 0
-              ? <><FiChevronRight className="inline-block mr-1" />listo para sortear</>
-              : <><FiChevronRight className="inline-block mr-1" />en espera</>}
-        </span>
-      </div>
+      {/* Subtle grid background for tech/minimalist feel */}
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, var(--color-brand-blue) 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
 
-      <div className="flex flex-col items-center justify-center gap-3 px-8 py-12 min-h-50">
-        {current?.numero !== undefined && (
-          <span
-            key={`num-${animKey}`}
-            className="text-sm font-bold tracking-widest tabular-nums animate-slot-in text-brand-blue"
-          >
-            N.° {String(current.numero).padStart(4, '0')}
-          </span>
-        )}
-
-        <div
-          key={`name-${animKey}`}
-          className="text-4xl font-black text-center leading-tight animate-slot-in text-brand-text"
-        >
-          {displayName}
+      {isRaffling && (
+        <div className="absolute top-8 text-xs font-black uppercase tracking-[0.3em] text-brand-blue animate-pulse flex items-center gap-2">
+          <FiZap /> Sorteando
         </div>
+      )}
 
-        {displayDesc && (
-          <div
-            key={`desc-${animKey}`}
-            className="text-lg text-center animate-slot-in text-brand-mauve"
-          >
-            {displayDesc}
+      <div className="flex flex-col items-center justify-center px-6 py-12 z-10 w-full overflow-hidden">
+
+        {/* ── Idle: no participants ── */}
+        {participants.length === 0 && !isRaffling && (
+          <div className="flex flex-col items-center text-center gap-5 animate-fade-in-up">
+            <div className="w-20 h-20 rounded-full bg-brand-blue/8 border border-brand-blue/15 flex items-center justify-center shadow-sm">
+              <FiStar className="text-3xl text-brand-blue/50" />
+            </div>
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-black text-brand-text tracking-tight mb-3">¡Comienza la magia!</h3>
+              <p className="text-brand-mauve/80 text-sm md:text-base max-w-xs mx-auto leading-relaxed">
+                Sube tu listado de participantes y define el premio en el panel izquierdo para empezar.
+              </p>
+            </div>
+            <div className="flex items-center gap-6 mt-2">
+              <div className="flex items-center gap-2 text-xs font-semibold text-brand-mauve/50 uppercase tracking-widest">
+                <FiUsers className="text-base" /> Participantes
+              </div>
+              <div className="w-px h-4 bg-brand-border/50"></div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-brand-mauve/50 uppercase tracking-widest">
+                <FiGift className="text-base" /> Premio
+              </div>
+            </div>
           </div>
         )}
+
+        {/* ── Idle: participants loaded, but no prize yet ── */}
+        {participants.length > 0 && !prize.trim() && !isRaffling && !current && (
+          <div className="flex flex-col items-center text-center gap-5 animate-fade-in-up">
+            <div className="w-20 h-20 rounded-full bg-brand-blue/8 border border-brand-blue/15 flex items-center justify-center shadow-sm">
+              <FiGift className="text-3xl text-brand-blue/50" />
+            </div>
+            <div>
+              <h3 className="text-2xl lg:text-3xl font-black text-brand-text tracking-tight mb-3">
+                <span className="text-brand-blue">{participants.length}</span> participantes listos
+              </h3>
+              <p className="text-brand-mauve/80 text-sm md:text-base max-w-xs mx-auto leading-relaxed">
+                Solo falta definir el premio para poder iniciar el sorteo.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Idle: everything ready ── */}
+        {participants.length > 0 && prize.trim() && !isRaffling && !current && (
+          <div className="flex flex-col items-center text-center gap-5 animate-fade-in-up">
+            <div className="w-20 h-20 rounded-full bg-brand-blue/15 border-2 border-brand-blue/30 flex items-center justify-center shadow-md shadow-brand-blue/10">
+              <FiCheckCircle className="text-4xl text-brand-blue" />
+            </div>
+            <div>
+              <h3 className="text-3xl lg:text-4xl font-black text-brand-text tracking-tight mb-3">Todo listo</h3>
+              <p className="text-brand-mauve/80 font-medium text-base max-w-xs mx-auto leading-relaxed">
+                Haz clic en <span className="font-black text-brand-blue">Iniciar Sorteo</span> para descubrir al ganador.
+              </p>
+            </div>
+            <div className="mt-1 bg-brand-blue/6 border border-brand-blue/15 rounded-2xl px-5 py-3 flex items-center gap-3">
+              <FiGift className="text-brand-blue text-lg shrink-0" />
+              <p className="text-sm font-semibold text-brand-text truncate max-w-50">{prize}</p>
+            </div>
+          </div>
+        )}
+
+        {/* ── Slot machine cycling ── */}
+        {(isRaffling || current) && (
+          <>
+            {current?.numero !== undefined && (
+              <span
+                key={`num-${animKey}`}
+                className="text-sm font-bold tracking-[0.4em] tabular-nums text-brand-blue/80 animate-slot-in bg-brand-blue/5 px-4 py-1.5 rounded-full border border-brand-blue/10 mb-4"
+              >
+                N.° {String(current.numero).padStart(4, '0')}
+              </span>
+            )}
+            <div
+              key={`name-${animKey}`}
+              className={`text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-center leading-tight tracking-tight text-brand-text w-full
+              ${isRaffling ? 'animate-slot-in blur-[0.5px]' : ''} mb-4 px-2`}
+              style={{
+                wordBreak: 'break-word',
+                overflowWrap: 'break-word',
+                hyphens: 'auto'
+              }}
+            >
+              {displayName}
+            </div>
+            {displayDesc && (
+              <div
+                key={`desc-${animKey}`}
+                className="text-lg md:text-xl text-center text-brand-mauve font-medium animate-slot-in mt-2"
+              >
+                {displayDesc}
+              </div>
+            )}
+          </>
+        )}
+
       </div>
     </div>
   );

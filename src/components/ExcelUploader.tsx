@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import * as XLSX from 'xlsx';
-import { FiUsers, FiUploadCloud, FiList } from 'react-icons/fi';
+import { FiUsers, FiUploadCloud, FiList, FiCheck, FiTrash2 } from 'react-icons/fi';
 import type { Participant } from './SorteoApp';
 
 type InputMode = 'excel' | 'manual';
@@ -73,30 +73,35 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
   };
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl p-5 h-full bg-brand-surface border border-brand-border">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-brand-mauve">
-          <FiUsers className="inline-block mr-1" /> Participantes
-        </h2>
-        <div className="flex rounded-lg overflow-hidden border border-brand-border">
+    <div className="flex flex-col gap-5 rounded-3xl p-6 lg:p-8 flex-1 bg-brand-bg border border-brand-border/40 shadow-sm hover:shadow-md transition-shadow duration-300">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue">
+            <FiUsers className="text-xl" />
+          </div>
+          <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-brand-mauve">
+            Participantes
+          </h2>
+        </div>
+        
+        <div className="flex bg-brand-surface/60 rounded-full p-1 border border-brand-border/30">
           <button
-            title="Subir Excel"
+            title="Subir Archivo Excel"
             onClick={() => switchMode('excel')}
-            className={`px-2.5 py-1.5 transition-colors duration-200 ${inputMode === 'excel' ? 'bg-brand-blue text-white' : 'bg-transparent text-brand-mauve'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${inputMode === 'excel' ? 'bg-brand-white text-brand-blue shadow-sm' : 'text-brand-mauve hover:text-brand-text'}`}
           >
-            <FiUploadCloud />
+            <FiUploadCloud className="text-base" /> <span className="hidden sm:inline">Excel</span>
           </button>
           <button
-            title="Escribir lista"
+            title="Añadir Manualmente"
             onClick={() => switchMode('manual')}
-            className={`px-2.5 py-1.5 transition-colors duration-200 ${inputMode === 'manual' ? 'bg-brand-blue text-white' : 'bg-transparent text-brand-mauve'}`}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all duration-300 ${inputMode === 'manual' ? 'bg-brand-white text-brand-blue shadow-sm' : 'text-brand-mauve hover:text-brand-text'}`}
           >
-            <FiList />
+            <FiList className="text-base" /> <span className="hidden sm:inline">Manual</span>
           </button>
         </div>
       </div>
 
-      {/* Drop zone / Manual input */}
       {inputMode === 'excel' ? (
         <div
           role="button"
@@ -106,63 +111,58 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
           onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
           onDragLeave={() => setIsDragging(false)}
           onDrop={handleDrop}
-          className={`flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed py-7 cursor-pointer transition-all duration-200 select-none ${isDragging ? 'border-brand-blue bg-brand-blue/8' : 'border-brand-mauve/30 bg-transparent'}`}
+          className={`flex flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed py-10 px-6 cursor-pointer transition-all duration-300 group
+            ${isDragging ? 'border-brand-blue bg-brand-blue/5 scale-[1.02]' : 'border-brand-border hover:border-brand-blue/50 hover:bg-brand-surface/30'}
+          `}
         >
           <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleInput} className="hidden" />
-          <FiUploadCloud className="text-3xl text-brand-blue" />
-          <p className="text-sm font-semibold text-center leading-snug px-4 text-brand-mauve">
-            {participants.length > 0
-              ? <><span className="font-black text-brand-blue">{participants.length}</span> participantes · <span className="text-brand-text-muted">{fileName}</span></>
-              : 'Clic o arrastra tu Excel aquí'}
-          </p>
-          <p className="text-xs text-brand-text-muted">.xlsx · .xls</p>
+          
+          <div className={`p-4 rounded-full transition-colors duration-300 ${participants.length > 0 ? 'bg-green-100 text-green-600' : 'bg-brand-surface text-brand-blue group-hover:scale-110'}`}>
+            {participants.length > 0 ? <FiCheck className="text-3xl" /> : <FiUploadCloud className="text-3xl" />}
+          </div>
+
+          <div className="text-center">
+            {participants.length > 0 ? (
+              <>
+                <p className="text-base text-brand-text font-medium">Doc: {fileName}</p>
+                <p className="text-sm text-brand-blue font-bold mt-1">{participants.length} personas listas</p>
+              </>
+            ) : (
+              <>
+                <p className="text-base text-brand-text font-medium">Arrastra tu Excel aquí</p>
+                <p className="text-xs text-brand-text-muted mt-2 uppercase tracking-widest">o haz clic para explorar</p>
+              </>
+            )}
+          </div>
         </div>
       ) : (
-        <textarea
-          placeholder={`Un participante por línea\nEj:\nJuan Pérez\nMaría García`}
-          value={manualText}
-          onChange={e => handleManualChange(e.target.value)}
-          rows={8}
-          className="w-full rounded-xl border-2 border-brand-mauve/30 px-4 py-3 resize-none text-sm transition-all duration-200 focus:outline-none focus:border-brand-blue focus:ring-3 focus:ring-brand-blue/15 bg-brand-bg text-brand-text"
-        />
+        <div className="flex-1 min-h-50 flex flex-col">
+          <textarea
+            placeholder={`Un participante por línea...\nEjemplo:\nJuan Pérez\nMaría Estévez\n...`}
+            value={manualText}
+            onChange={e => handleManualChange(e.target.value)}
+            className="flex-1 w-full rounded-2xl border-2 border-brand-border/50 p-5 resize-none text-sm transition-all duration-300 focus:outline-none focus:border-brand-blue focus:bg-brand-surface/30 bg-brand-surface/10 text-brand-text font-medium"
+          />
+          {participants.length > 0 && (
+            <p className="text-xs text-brand-blue font-bold mt-3 text-right">
+              {participants.length} participantes detectados
+            </p>
+          )}
+        </div>
       )}
 
-      {/* Participants table */}
+      {/* Participants List Summary (Minimalist) */}
       {participants.length > 0 && (
-        <div className="overflow-auto rounded-xl max-h-72 border border-brand-border">
-          <table className="w-full text-sm min-w-max">
-            <thead className="sticky top-0 bg-brand-surface2">
-              <tr>
-                <th className="px-3 py-2 text-left font-semibold whitespace-nowrap text-brand-mauve">#</th>
-                {headers.map((h, i) => (
-                  <th key={i} className="px-3 py-2 text-left font-semibold whitespace-nowrap text-brand-mauve">
-                    {h || `Columna ${i + 1}`}
-                  </th>
-                ))}
-                {participants[0]?.numero !== undefined && (
-                  <th className="px-3 py-2 text-left font-semibold whitespace-nowrap text-brand-blue-light">Número</th>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {participants.map((p, rowIdx) => (
-                <tr
-                  key={p.id}
-                  className={`border-t border-brand-border transition-colors hover:bg-brand-blue/10 ${rowIdx % 2 !== 0 ? 'bg-brand-blue/4' : ''}`}
-                >
-                  <td className="px-3 py-2 tabular-nums text-brand-text-muted">{p.id}</td>
-                  {p.data.map((val, i) => (
-                    <td key={i} className="px-3 py-2 whitespace-nowrap text-brand-text">{val}</td>
-                  ))}
-                  {p.numero !== undefined && (
-                    <td className="px-3 py-2 font-bold tabular-nums text-brand-blue-light">
-                      #{String(p.numero).padStart(4, '0')}
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="mt-2 flex items-center justify-between bg-brand-surface2/40 px-5 py-3 rounded-xl border border-brand-border/30">
+           <span className="text-xs font-semibold text-brand-mauve uppercase tracking-widest">
+             Datos cargados
+           </span>
+           <button 
+             onClick={(e) => { e.stopPropagation(); onParticipantsLoaded([], []); setFileName(''); setManualText(''); }} 
+             className="text-xs text-red-500 hover:text-red-600 font-bold flex items-center gap-1 transition-colors"
+           >
+             <FiTrash2 className="text-sm" /> Limpiar
+           </button>
         </div>
       )}
     </div>
