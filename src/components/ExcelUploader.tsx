@@ -158,7 +158,7 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
              Datos cargados
            </span>
            <button 
-             onClick={(e) => { e.stopPropagation(); onParticipantsLoaded([], []); setFileName(''); setManualText(''); }} 
+             onClick={(e) => { e.stopPropagation(); onParticipantsLoaded([], []); setFileName(''); setManualText(''); if (fileInputRef.current) fileInputRef.current.value = ''; }} 
              className="text-xs text-red-500 hover:text-red-600 font-bold flex items-center gap-1 transition-colors"
            >
              <FiTrash2 className="text-sm" /> Limpiar
