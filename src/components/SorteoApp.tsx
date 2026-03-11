@@ -98,7 +98,7 @@ export default function SorteoApp() {
             <div className="absolute top-0 right-0 -m-20 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 -m-20 w-64 h-64 bg-brand-mauve/5 rounded-full blur-3xl pointer-events-none"></div>
 
-            <div className="flex-1 flex flex-col justify-center relative z-10 w-full min-h-[500px]">
+            <div className="flex-1 flex flex-col justify-center relative z-10 w-full min-h-125">
               <WinnerDisplay
                 participants={participants}
                 winner={winner}
