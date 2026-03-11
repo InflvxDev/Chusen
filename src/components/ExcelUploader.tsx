@@ -36,6 +36,22 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
 
   const parseFile = (file: File) => {
     setFileName(file.name);
+    const ext = file.name.split('.').pop()?.toLowerCase();
+
+    if (ext === 'txt') {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        const text = evt.target?.result as string;
+        if (!text) return;
+        const lines = text.split('\n').filter(l => l.trim() !== '');
+        if (lines.length === 0) { onParticipantsLoaded([], []); return; }
+        const data: Participant[] = lines.map((line, i) => ({ id: i + 1, data: [line.trim()] }));
+        onParticipantsLoaded(data, ['Nombre']);
+      };
+      reader.readAsText(file);
+      return;
+    }
+
     const reader = new FileReader();
     reader.onload = (evt) => {
       const raw = evt.target?.result;
@@ -115,7 +131,7 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
             ${isDragging ? 'border-brand-blue bg-brand-blue/5 scale-[1.02]' : 'border-brand-border hover:border-brand-blue/50 hover:bg-brand-surface/30'}
           `}
         >
-          <input ref={fileInputRef} type="file" accept=".xlsx,.xls" onChange={handleInput} className="hidden" />
+          <input ref={fileInputRef} type="file" accept=".xlsx,.xls,.csv,.txt" onChange={handleInput} className="hidden" />
           
           <div className={`p-4 rounded-full transition-colors duration-300 ${participants.length > 0 ? 'bg-green-100 text-green-600' : 'bg-brand-surface text-brand-blue group-hover:scale-110'}`}>
             {participants.length > 0 ? <FiCheck className="text-3xl" /> : <FiUploadCloud className="text-3xl" />}
@@ -129,8 +145,8 @@ export default function ExcelUploader({ onParticipantsLoaded, participants, head
               </>
             ) : (
               <>
-                <p className="text-base text-brand-text font-medium">Arrastra tu Excel aquí</p>
-                <p className="text-xs text-brand-text-muted mt-2 uppercase tracking-widest">o haz clic para explorar</p>
+                <p className="text-base text-brand-text font-medium">Arrastra tu archivo aquí</p>
+                <p className="text-xs text-brand-text-muted mt-2 uppercase tracking-widest">Excel, CSV o TXT · o haz clic para explorar</p>
               </>
             )}
           </div>
